@@ -6,6 +6,8 @@ let DataBase = [
         password: `!@youness`,
         password_confirmed: `!@youness`,
         amount: 400,
+        history: [],
+        amountMustPaying: 0,
     },
     {
         name: `zakaria`,
@@ -14,6 +16,8 @@ let DataBase = [
         password: `!@zakaria`,
         password_confirmed: `!@zakaria`,
         amount: 1000,
+        history: [],
+
     },
 ];
 
@@ -116,16 +120,17 @@ function singUp() {
     }
 
     class Persone {
-        constructor(name, email, age, password, password_confirmed, amount) {
+        constructor(name, email, age, password, password_confirmed, amount, history) {
             this.name = name;
             this.email = email;
             this.age = age;
             this.password = password;
             this.password_confirmed = password_confirmed;
             this.amount = amount;
+            this.history = history
         }
     }
-    let person = new Persone(namee, email, Age, Password, Password_confirmed, 500);
+    let person = new Persone(namee, email, Age, Password, Password_confirmed, 500, []);
     DataBase.push(person);
 }
 
@@ -140,8 +145,10 @@ function logIn() {
         if (element.email == emailToLogin) {
             if (element.password == passwordToLogin) {
                 alert(`you are on your account`)
-                alert(`${element.name} your current amount is ${element.amount}dh`)
-                services(element)
+                alert(`${element.name} your current amount is ${element.amount}dh`);
+                services(element);
+
+                console.log(DataBase)
             } else {
                 alert(`your password is wrong`)
             }
@@ -198,16 +205,20 @@ function services(user) {
 
     while (servicesQuestion != `log out` || servicesQuestion != `withdraw money` || servicesQuestion != `deposit money` || servicesQuestion != `tak a loan` || servicesQuestion != `invest` || servicesQuestion != `history`) {
         if (servicesQuestion == `log out`) {
+            payingTakingLoan(user);
             AskingTheUser()
             break;
         } else if (servicesQuestion == `withdraw money`) {
             withdrawMoney(user)
             break;
         } else if (servicesQuestion == `deposit money`) {
+            DepositMoney(user)
             break;
         } else if (servicesQuestion == `tak a loan`) {
+            takeLoan(user)
             break;
         } else if (servicesQuestion == `invest`) {
+            alert(`invest`)
             break;
         } else if (servicesQuestion == `history`) {
             break;
@@ -222,11 +233,47 @@ function withdrawMoney(user) {
     let withdrawQuestion = parseInt(prompt(`how much money you want to withdraw`))
     if (withdrawQuestion <= user.amount) {
         user.amount -= withdrawQuestion
+        user.history.push(`this amount ${withdrawQuestion} have been taking as a withdraw`)
         console.log(user.amount)
-    }else{
-        console.log(`you don't have this money to withdraw`)
+    } else {
+        alert(`you don't have this money to withdraw`)
+        withdrawMoney(user)
     }
 }
 
+function DepositMoney(user) {
+    let depositQuestion = parseInt(prompt(`how much money you want to deposit on your account`))
 
+    if (depositQuestion <= 1000) {
+        user.amount += depositQuestion;
+        user.history.push
+        console.log(user.amount)
+    } else {
+        alert(`you can't add more that 1000 dh`)
+        DepositMoney(user)
+    }
+}
+
+function takeLoan(user) {
+    let maxLoan = user.amount * 0.2;
+    let takLoanQuestion = parseInt(prompt(`you can take up to ${maxLoan} as a loan`));
+    while (takLoanQuestion > maxLoan || takLoanQuestion == 0) {
+        takLoanQuestion = parseInt(prompt(`you can take up to ${maxLoan}`));
+    }
+    user.amount += takLoanQuestion;
+    user.history.push(`the loan of ${takLoanQuestion} have been taking`);
+    user.remainingRepayments = takLoanQuestion / (user.amount * 0.1);
+    AskingTheUser()
+}
+
+function payingTakingLoan(user) {
+    if (user.remainingRepayments > 0) {
+        user.amount -= user.amount * 0.1;
+        user.remainingRepayments--;
+
+        if (user.remainingRepayments === 0) {
+            alert(`You have successfully repaid your loan.`);
+        }
+    }
+}
 AskingTheUser()
