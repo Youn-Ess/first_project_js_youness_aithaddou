@@ -14,7 +14,7 @@ let DataBase = [
         password: `!@zakaria`,
         password_confirmed: `!@zakaria`,
         amount: 1000,
-    }
+    },
 ];
 
 let specialChars = /[`!@#$%^&*()_\-+=\[\]{};':"\\|,.<>\/?~ ]/;
@@ -132,35 +132,23 @@ function singUp() {
 function logIn() {
     let emailToLogin = prompt(`enter your email to login`);
     let passwordToLogin = prompt(`enter your password to login`);
-    // DataBase.forEach(element => {
-    //     if (element.email == emailToLogin) {
-    //         if (element.password == passwordToLogin) {
-    //             alert(`you are on your account`)
-    //             console.log(`${element.name} your current amount is ${element.amount}dh`)
-    //         } else {
-    //             alert(`your password is wrong`)
-    //         }
-    //     } else {
-    //         alert(`your email is wrong`)
-    //     }
-    // });
 
     for (let i = 0; i < DataBase.length; i++) {
+
         let element = DataBase[i];
+
         if (element.email == emailToLogin) {
             if (element.password == passwordToLogin) {
                 alert(`you are on your account`)
-                console.log(`${element.name} your current amount is ${element.amount}dh`)
-                
+                alert(`${element.name} your current amount is ${element.amount}dh`)
+                services(element)
             } else {
                 alert(`your password is wrong`)
             }
         } else {
             alert(`your email is wrong`)
         }
-        break;
     }
-
 }
 
 
@@ -175,31 +163,70 @@ function changePassword() {
                 element.password = newPasswordConfirmed;
             } else {
                 alert(`thats not the same pass that you enter at the begining`);
-                changePassword();
+                AskingTheUser()
             }
         } else {
             alert(`that email not exesting`);
-            changePassword()
+            AskingTheUser()
         }
     });
 }
 
-logIn()
-// let firstQuestion = prompt(`you want to sign up, log in, or change the password.`)
-// switch (firstQuestion) {
-//     case `sign up`:
-//         singUp();
-//         break;
-//     case `log in`:
-//         logIn();
-//         break;
-//     case `change the password`:
-//         changePassword();
-//         break;
-//     default:
-//         alert(`please choose between sign up, log in, or change the password`)
-//         break;
-// }
 
-console.log(DataBase)
 
+function AskingTheUser() {
+    let firstQuestion = prompt(`you want to sign up, log in, or change the password.`)
+    while (firstQuestion != `sign up` || firstQuestion != `log in` || firstQuestion != `change the password`) {
+        if (firstQuestion == `sign up`) {
+            singUp();
+            break;
+        } else if (firstQuestion == `log in`) {
+            logIn();
+            break;
+        } else if (firstQuestion == `change the password`) {
+            changePassword();
+            break;
+        }
+        alert(`${firstQuestion} is not accepted`);
+        firstQuestion = prompt(`please choose between sign up, log in, or change the password`)
+    }
+}
+
+
+function services(user) {
+    let servicesQuestion = prompt(`you want to log out, withdraw money, deposit money, tak a loan , invest, or history.`)
+
+    while (servicesQuestion != `log out` || servicesQuestion != `withdraw money` || servicesQuestion != `deposit money` || servicesQuestion != `tak a loan` || servicesQuestion != `invest` || servicesQuestion != `history`) {
+        if (servicesQuestion == `log out`) {
+            AskingTheUser()
+            break;
+        } else if (servicesQuestion == `withdraw money`) {
+            withdrawMoney(user)
+            break;
+        } else if (servicesQuestion == `deposit money`) {
+            break;
+        } else if (servicesQuestion == `tak a loan`) {
+            break;
+        } else if (servicesQuestion == `invest`) {
+            break;
+        } else if (servicesQuestion == `history`) {
+            break;
+        }
+        alert(`${servicesQuestion} is not an option`)
+        servicesQuestion = prompt(`please choose between  log out, withdraw money, deposit money, tak a loan , invest, or history.`)
+
+    }
+}
+
+function withdrawMoney(user) {
+    let withdrawQuestion = parseInt(prompt(`how much money you want to withdraw`))
+    if (withdrawQuestion <= user.amount) {
+        user.amount -= withdrawQuestion
+        console.log(user.amount)
+    }else{
+        console.log(`you don't have this money to withdraw`)
+    }
+}
+
+
+AskingTheUser()
