@@ -83,7 +83,7 @@ let specialAtmark = /[@]/
 // }
 // console.log(Age)
 
-//* promt email with test
+//* promt Password with test
 let Password = prompt(`enter your password`).trim().split(` `).join(``);
 
 while (Password.length < 7 || !specialAtmark.test(Password)) {
@@ -96,6 +96,24 @@ while (Password.length < 7 || !specialAtmark.test(Password)) {
     }
 }
 
-console.log(Password)
 
+//* promt Password confirmed with test
+let Password_confirmed = prompt(`enter your password again to confirme it`);
+if (Password_confirmed != Password) {
+    alert(`thats not the same pass that you enter at the begining`);
+}
+
+// class Person {
+//     constructor(name, email, age, password, password_confirmed) {
+//         this.name = name;
+//         this.email = email;
+//         this.age = age;
+//         this.password = password;
+//         this.password_confirmed = password_confirmed;
+//     }
+// }
+
+// let person = new Person(Fullname, Email, Age, Password, Password_confirmed);
+// DataBase.push(person);
+// console.log(DataBase)
 
