@@ -42,28 +42,46 @@ let specialAtmark = /[@]/
 
 
 //! promt email with test
+// let email = prompt(`enter your email`).trim().toLowerCase().split(` `).join(``);
 
-let email = prompt(`enter your email`).trim().toLowerCase().split(` `).join(``);
+// while (!specialAtmark.test(email) || email.length < 10) {
+//     if (!specialAtmark.test(email)) {
+//         alert(`your email must contain atmark (@)`)
+//     } else if (email.length < 10) {
+//         alert(`your email must contain at least 10 letters`);
+//     }
+//     email = prompt(`enter your email again`).trim().toLowerCase().split(` `).join(``);
+// }
 
-while (!specialAtmark.test(email) || email.length < 10) {
-    if (!specialAtmark.test(email)) {
-        alert(`your email must contain atmark (@)`)
-    } else if (email.length < 10) {
-        alert(`your email must contain at least 10 letters`);
+// for (let i = 0; i < DataBase.length; i++) {
+//     let element = DataBase[i];
+//     while (email == element.email) {
+//         alert(" the email should be unique");
+//         email = prompt(`enter your email again`).trim().toLowerCase().split(` `).join(``);
+//     }
+// }
+
+// console.log(email);
+
+//^ promt email with test
+let Age = prompt(`enter your age`).trim();
+while (Age.length == 0 || !specialNumbers.test(Age) || (Age > 100 || Age < 18)) {
+    if (Age.length == 0) {
+        alert(`you can't leave your age empty`);
+    } else if (!specialNumbers.test(Age)) {
+        alert(`you can't enter a string please enter a number`)
+    } else if (Age > 100 || Age < 18) {
+        if (Age > 100) {
+            alert(`rak mati`)
+            break;
+        }else if(Age < 18){
+            alert(`rak ba9i sghir`)
+            break;
+        }
     }
-    email = prompt(`enter your email`).trim().toLowerCase().split(` `).join(``);
+    Age = prompt(`enter your age again`).trim();
 }
 
-for (let i = 0; i < DataBase.length; i++) {
-    let element = DataBase[i];
-    while (email == element.email) {
-        alert(" the email should be unique");
-        email = prompt(`enter your email`).trim().toLowerCase().split(` `).join(``);
-    }
-}
 
-console.log(email);
-
-
-
+console.log(Age)
 
