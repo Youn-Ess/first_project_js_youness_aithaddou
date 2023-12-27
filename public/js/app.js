@@ -8,6 +8,7 @@ let DataBase = [
         amount: 400,
         history: [],
         amountMustPaying: 0,
+        investedAmount: 0
     },
     {
         name: `zakaria`,
@@ -17,6 +18,8 @@ let DataBase = [
         password_confirmed: `!@zakaria`,
         amount: 1000,
         history: [],
+        amountMustPaying: 0,
+        investedAmount: 0
 
     },
 ];
@@ -132,30 +135,33 @@ function singUp() {
     }
     let person = new Persone(namee, email, Age, Password, Password_confirmed, 500, []);
     DataBase.push(person);
+
+    AskingTheUser()
 }
 
 function logIn() {
-    let emailToLogin = prompt(`enter your email to login`);
-    let passwordToLogin = prompt(`enter your password to login`);
-
+    let emailToLogin = prompt(`Enter your email to login:`);
+    let passwordToLogin = prompt(`Enter your password to login:`);
+    let emailFound = false;
     for (let i = 0; i < DataBase.length; i++) {
-
         let element = DataBase[i];
-
-        if (element.email == emailToLogin) {
-            if (element.password == passwordToLogin) {
-                alert(`you are on your account`)
-                alert(`${element.name} your current amount is ${element.amount}dh`);
+        if (element.email === emailToLogin) {
+            emailFound = true;
+            if (element.password === passwordToLogin) {
+                alert(`You are on your account.`);
+                alert(`${element.name}, your current amount is ${element.amount} DH.`);
                 services(element);
-
-                console.log(DataBase)
             } else {
-                alert(`your password is wrong`)
+                alert(`Your password is wrong.`);
             }
-        } else {
-            alert(`your email is wrong`)
+            break;
         }
     }
+
+    if (emailFound == false) {
+        alert(`Your email is wrong.`);
+    }
+    AskingTheUser()
 }
 
 
@@ -201,11 +207,12 @@ function AskingTheUser() {
 
 
 function services(user) {
-    let servicesQuestion = prompt(`you want to log out, withdraw money, deposit money, tak a loan , invest, or history.`)
+    let servicesQuestion = prompt(`you want to log out, withdraw money, deposit money, tak a loan , invest, or history exit.`)
 
-    while (servicesQuestion != `log out` || servicesQuestion != `withdraw money` || servicesQuestion != `deposit money` || servicesQuestion != `tak a loan` || servicesQuestion != `invest` || servicesQuestion != `history`) {
+    while (servicesQuestion != `log out` || servicesQuestion != `withdraw money` || servicesQuestion != `deposit money` || servicesQuestion != `tak a loan` || servicesQuestion != `invest` || servicesQuestion != `history` || servicesQuestion != `exit`) {
         if (servicesQuestion == `log out`) {
             payingTakingLoan(user);
+            // calculateInvestmentIncome(user)
             AskingTheUser()
             break;
         } else if (servicesQuestion == `withdraw money`) {
@@ -218,9 +225,16 @@ function services(user) {
             takeLoan(user)
             break;
         } else if (servicesQuestion == `invest`) {
-            alert(`invest`)
+            Invers(user)
             break;
         } else if (servicesQuestion == `history`) {
+            if (user.history.length == 0) {
+                alert(`there is no history`)
+            }else(
+                alert(user.history)
+            )
+            break;
+        }else if(servicesQuestion == `exit`){
             break;
         }
         alert(`${servicesQuestion} is not an option`)
@@ -235,8 +249,9 @@ function withdrawMoney(user) {
         user.amount -= withdrawQuestion
         user.history.push(`this amount ${withdrawQuestion} have been taking as a withdraw`)
         console.log(user.amount)
+        services(user);
     } else {
-        alert(`you don't have this money to withdraw`)
+        alert(`you don't have this money to withdraw your current amout is ${user.amount}`)
         withdrawMoney(user)
     }
 }
@@ -246,8 +261,9 @@ function DepositMoney(user) {
 
     if (depositQuestion <= 1000) {
         user.amount += depositQuestion;
-        user.history.push
-        console.log(user.amount)
+        user.history.push(`this ${depositQuestion} has been pushed on you account`)
+        console.log(user.amount);
+        services(user)
     } else {
         alert(`you can't add more that 1000 dh`)
         DepositMoney(user)
@@ -270,10 +286,42 @@ function payingTakingLoan(user) {
     if (user.remainingRepayments > 0) {
         user.amount -= user.amount * 0.1;
         user.remainingRepayments--;
-
+        user.history.push(`this ${user.amount * 0.1} has been taking from your amount`)
         if (user.remainingRepayments === 0) {
             alert(`You have successfully repaid your loan.`);
         }
     }
+}
+
+
+function Invers(user) {
+    let inversQuestion = parseInt(prompt(`Amount of money that you want to invest:`));
+
+    while (inversQuestion > user.amount || inversQuestion <= 0) {
+        inversQuestion = parseInt(prompt(`Invalid amount. Please enter a valid amount:`));
+    }
+
+    user.amount -= inversQuestion;
+    user.investedAmount += inversQuestion;
+    user.history.push(`Amount of ${inversQuestion} has been invested.`);
+
+    AskingTheUser();
+}
+
+function calculateInvestmentIncome(user) {
+    let investmentIncomeRate = 0.2;
+    let maxIncomeRate = 1.2;
+
+    let earnedIncome = user.investedAmount * investmentIncomeRate;
+    let totalEarnedIncome = user.earnedIncome + earnedIncome;
+    user.history.push(`Amount of ${inversQuestion} has been pushed on your accout as an inverstment.`);
+
+    if (totalEarnedIncome >= user.investedAmount * maxIncomeRate) {
+        user.earnedIncome = user.investedAmount * maxIncomeRate;
+    } else {
+        user.earnedIncome = totalEarnedIncome;
+    }
+
+    return earnedIncome;
 }
 AskingTheUser()
