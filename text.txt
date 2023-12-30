@@ -1,0 +1,56 @@
+main{
+    questions (sign up , login , change the password)
+}
+
+signup{
+    fullname(){
+
+    }
+
+    email(){
+
+    }
+
+    age(){
+
+    }
+    password(){
+
+    }
+
+    password_confirmed(){
+
+    }
+}
+
+login(){
+    check_email(){
+
+    }
+    check_password(){
+
+    }
+
+    services(){
+        logout(){
+        }
+        withdraw(){
+
+        }
+        loan(){
+
+        }
+        invest(){
+
+        }
+        history(){
+
+        }
+
+        question services;
+    }
+}
+
+change_password(){
+    
+}

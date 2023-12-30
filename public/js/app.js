@@ -1,327 +1,336 @@
-let DataBase = [
-    {
-        name: `youness`,
-        email: `youness@gmail.com`,
-        age: 20,
-        password: `!@youness`,
-        password_confirmed: `!@youness`,
-        amount: 400,
-        history: [],
-        amountMustPaying: 0,
-        investedAmount: 0
-    },
-    {
-        name: `zakaria`,
-        email: `zakaria@gmail.com`,
-        age: 18,
-        password: `!@zakaria`,
-        password_confirmed: `!@zakaria`,
-        amount: 1000,
-        history: [],
-        amountMustPaying: 0,
-        investedAmount: 0
+class Database {
+    static users = []
+}
 
-    },
-];
+class Person {
+    constructor(fullname, email, age, password, amount) {
+        this.fullname = fullname;
+        this.email = email;
+        this.age = age;
+        this.password = password;
+        this.amount = amount || Math.floor(Math.random() * (20000 - 1000)) + 1000;
+        this.loan = 0
+        this.invest = 0
+        this.history = []
 
-let specialChars = /[`!@#$%^&*()_\-+=\[\]{};':"\\|,.<>\/?~ ]/;
-let specialNumbers = /\d/
-let specialAtmark = /[@]/
-
-
-
-
-function singUp() {
-    // //todo promt full name with test
-    let namee = prompt(`enter your full name`);
-    let Fullname = namee.trim().split(` `);
-    for (let i = 0; i < Fullname.length; i++) {
-        Fullname[i] = Fullname[i][0].toUpperCase() + Fullname[i].slice(1).toLowerCase();
+        // Database.users.push(this)
     }
-    let FullnameWithOutSpaces = Fullname.join(``);
-    let FullnameWithSpaces = Fullname.join(` `);
+}
+new Person(`ahmed`, `ahmed@gmail.com`, 20, `1234`, 1000);
+
+class Char {
+    static specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+    static numbers = /\d/;
+    static Alphabetic = /[a-zA-Z]/;
+
+}
+
+function today() {
+    const now = new Date()
+    const formattedDate = `${now.getUTCFullYear()}-${(now.getUTCMonth() + 1)}-${now.getUTCDate()} ${now.getUTCHours()}:${now.getUTCMinutes()}`
+    return formattedDate
+}
 
 
-    while (FullnameWithOutSpaces.length < 5 || specialChars.test(FullnameWithOutSpaces) || specialNumbers.test(FullnameWithOutSpaces)) {
-        if (FullnameWithOutSpaces.length < 5) {
-            alert(`your name must contain at least 5 letters`);
-        } else if (specialChars.test(FullnameWithOutSpaces)) {
-            alert(`we can't accept a name with special char`);
-        } else if (specialNumbers.test(FullnameWithOutSpaces)) {
-            alert(`we can't accept a name with numbers`);
+function signUp() {
+    function get_fullName() {
+        let fullName = prompt(`enter your name`);
+        // test if the full name is empty
+        if (!fullName) {
+            alert(`you can't leave your name empty`);
+            return get_fullName()
         }
-        Fullname = prompt(`enter your full name`).trim().split(` `);
-        for (let i = 0; i < Fullname.length; i++) {
-            Fullname[i] = Fullname[i][0].toUpperCase() + Fullname[i].slice(1).toLowerCase();
+        //Do not save the Name if it contains numbers, "@", or similar special characters.
+        if (Char.specialChars.test(fullName)) {
+            alert(`you can't use those special characters (${Char.specialChars}) on your name`)
+            return get_fullName()
         }
-        FullnameWithOutSpaces = Fullname.join(``);
-        FullnameWithSpaces = Fullname.join(` `);
+        if (Char.numbers.test(fullName)) {
+            alert(`you can't use numbers on your name`);
+            return get_fullName()
+        }
+        // remove the leading or trailing spaces
+        // After each space, the first letter should remain capitalized.
+        //Check that all other characters are in lowercase.
+        let newName = fullName.trim().split(` `).map(name => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()).join(` `);
+        // Do not save the Name if it has less than 5 characters (excluding spaces).
+        if (newName.split(` `).join(``).length < 5) {
+            alert(`you name is to short please enter a name that have more than 5 charracters`);
+            return get_fullName()
+        }
+        return newName
     }
+    const fullName = get_fullName();
 
-
-
-    //! promt email with test
-    let email = prompt(`enter your email`).trim().toLowerCase().split(` `).join(``);
-
-    while (!specialAtmark.test(email) || email.length < 10) {
-        if (!specialAtmark.test(email)) {
-            alert(`your email must contain atmark (@)`)
-        } else if (email.length < 10) {
-            alert(`your email must contain at least 10 letters`);
+    function getEmail() {
+        let email = prompt(`enter your email`);
+        // test if the full name is empty
+        if (!email) {
+            alert(`you can't leave your email empty`);
+            return getEmail()
         }
-        email = prompt(`enter your email again`).trim().toLowerCase().split(` `).join(``);
-    }
-
-    for (let i = 0; i < DataBase.length; i++) {
-        let element = DataBase[i];
-        while (email == element.email) {
-            alert(" the email should be unique");
-            email = prompt(`enter your email again`).trim().toLowerCase().split(` `).join(``);
+        // Check for leading or trailing spaces.
+        // Convert all letters to lowercase.
+        email = email.trim().toLowerCase()
+        // Do not save the Email if it has spaces in the middle.
+        if (email.includes(` `)) {
+            alert(`your email can't contain spaces`);
+            return getEmail()
         }
-    }
 
-    console.log(email);
+        // Do not save the Email if it contain more that one "@" symbol.
+        if (email.split(``).filter(char => char == `@`).length > 1) {
+            alert(`you can't put two atmarks at your email`);
+            return getEmail()
+        }
+        // Do not save the Email if it does not contain exactly one "@" symbol.
+        if (!email.includes(`@`)) {
+            alert(`your email munst contain @ character`);
+            return getEmail()
+        }
+        // Do not save the Email if it has fewer than 10 characters (excluding spaces).
+        if (email.split(`@`)[1].length == 0) {
+            alert(`your email munst end with some thing like gmail.com`);
+            return getEmail()
+        }
+        // Do not save the Email if it does not contain exactly one "." symbol.
+        if (!email.split(`@`)[1].includes(`.`)) {
+            alert(`your email munst containe a . after the atmark`);
+            return getEmail()
+        }
+        if (email.split(`@`)[0].length < 5) {
+            alert(`your email munst contain 5 characters or more before atmark`);
+            return getEmail()
+        }
 
-    //^ promt email with test
-    let Age = prompt(`enter your age`).trim();
-    while (Age.length == 0 || !specialNumbers.test(Age) || (Age > 100 || Age < 18)) {
-        if (Age.length == 0) {
-            alert(`you can't leave your age empty`);
-        } else if (!specialNumbers.test(Age)) {
-            alert(`you can't enter a string please enter a number`)
-        } else if (Age > 100 || Age < 18) {
-            if (Age > 100) {
-                alert(`rak mati`)
-                break;
-            } else if (Age < 18) {
-                alert(`rak ba9i sghir`)
-                break;
+        // Ensure the email is unique.
+        for (const user of Database.users) {
+            if (email == user.email) {
+                alert(`this email all ready used ! try another one`);
+                return getAge()
             }
         }
-        Age = prompt(`enter your age again`).trim();
+        return email
     }
-    console.log(Age)
+    const email = getEmail()
 
-    //* promt Password with test
-    let Password = prompt(`enter your password`).trim().split(` `).join(``);
-
-    while (Password.length < 7 || !specialAtmark.test(Password)) {
-        if (Password.length < 7) {
-            alert(`your password must contain at least 7 characters`);
-            Password = prompt(`enter your password again`).trim().split(` `).join(``);
-        } if (!specialAtmark.test(Password)) {
-            alert(`Require at least one special character`)
-            Password = prompt(`enter your password again`).trim().split(` `).join(``);
+    function getAge() {
+        let age = prompt(`enter your age`);
+        // test if the age is empty
+        if (!age) {
+            alert(`you can't leave your age empty`);
+            return getAge()
         }
-    }
-
-
-    //* promt Password confirmed with test
-    let Password_confirmed = prompt(`enter your password again to confirme it`);
-    if (Password_confirmed != Password) {
-        alert(`thats not the same pass that you enter at the begining`);
-    }
-
-    class Persone {
-        constructor(name, email, age, password, password_confirmed, amount, history) {
-            this.name = name;
-            this.email = email;
-            this.age = age;
-            this.password = password;
-            this.password_confirmed = password_confirmed;
-            this.amount = amount;
-            this.history = history
+        // Check for leading, trailing, or middle spaces.
+        age = age.trim();
+        // Verify that only digits are entered.
+        if (Char.Alphabetic.test(age) || Char.specialChars.test(age)) {
+            alert(`invalide input please enter your age`);
+            return getAge()
         }
+        // Do not save the Age if it has 0 characters, or if it has 3 characters or more.
+        if (age == `0` || age.length > 2) {
+            alert(`invalide input please enter your age (can't put 0 or 100)`);
+            return getAge();
+        }
+        return age;
     }
-    let person = new Persone(namee, email, Age, Password, Password_confirmed, 500, []);
-    DataBase.push(person);
+    const age = getAge()
 
-    AskingTheUser()
+    function getPassword() {
+        let password = prompt(`enter your password`);
+        // test if the password is empty
+        if (!password) {
+            alert(`you can't leave your password empty`);
+            return getPassword()
+        }
+        // Check for leading or trailing spaces.
+        password = password.trim();
+        // Do not save the Password if it has spaces in the middle.
+        if (password.includes(` `)) {
+            alert(`your password can't contain spaces`)
+        }
+        // Require at least one special character from the set: ["@", "#", "-", "+", "*", "/"].
+        if (!Char.specialChars.test(password)) {
+            alert(`you must put some special characters on your password`)
+            return getPassword()
+        }
+        // Require at least 7 characters to confirm the password.
+        if (password.length < 7) {
+            alert(`you password is to short please enter a password that have more than 7 charracters`)
+            return getPassword();
+        }
+        // # confirm the password
+        let confirmPassword = prompt(`confirme your password`)
+        if (confirmPassword != password) {
+            alert(`password not match try again`);
+            return getPassword()
+        }
+        return confirmPassword
+    }
+    const password = getPassword()
+
+    let person = new Person(fullName, email, age, password);
+    Database.users.push(person)
+    main()
+
 }
 
 function logIn() {
-    let emailToLogin = prompt(`Enter your email to login:`);
-    let passwordToLogin = prompt(`Enter your password to login:`);
-    let emailFound = false;
-    for (let i = 0; i < DataBase.length; i++) {
-        let element = DataBase[i];
-        if (element.email === emailToLogin) {
-            emailFound = true;
-            if (element.password === passwordToLogin) {
-                alert(`You are on your account.`);
-                alert(`${element.name}, your current amount is ${element.amount} DH.`);
-                services(element);
+    let emailQuestion = prompt(`enter your email to log in`);
+    let passwordQuestion = prompt(`enter your password`);
+    let loginPerson = []
+
+    for (let i = 0; i < Database.users.length; i++) {
+        let person = Database.users[i];
+        if (emailQuestion != person.email) {
+            alert(`this email doesn't exist`)
+            return logIn()
+        } else {
+
+            if (passwordQuestion != person.password) {
+                alert(`this password is uncorrect`);
+                return logIn()
             } else {
-                alert(`Your password is wrong.`);
+                loginPerson.push(person)
+                alert(`you welcome`);
+                person.history.push(`${today()} login`)
+                return services()
             }
-            break;
+
         }
     }
 
-    if (emailFound == false) {
-        alert(`Your email is wrong.`);
+    function services() {
+        let servicesQuestion = prompt(`your current amount ${loginPerson[0].amount} choose between those services : log out , withdraw , deposit , take a loan ,invest or display history `)
+        function logOut() {
+            loginPerson.slice(0, -1)
+            loginPerson[0].amount -= loginPerson[0].loan * 0.1
+            loginPerson[0].amount += loginPerson[0].invest * 0.2
+            loginPerson[0].history.push(`${today()} log out`)
+
+            alert(`have a nice day`)
+            main()
+        }
+        function withdraw() {
+            let withdrawQuestion = parseInt(prompt(`your current amount ${loginPerson[0].amount} how much money you want to withdraw it`))
+            if (withdrawQuestion > loginPerson[0].amount) {
+                alert(`you don't have this amount of ${withdrawQuestion}$ on your account`)
+                withdraw()
+            } else {
+                loginPerson[0].amount -= withdrawQuestion;
+                loginPerson[0].history.push(`${today()} withdraw ${withdrawQuestion}`)
+            }
+            services()
+        }
+        function deposit() {
+            let depositQuestion = parseInt(prompt(`your current amount ${loginPerson[0].amount} how much money you want to deposit on your account`))
+            if (depositQuestion > 1000) {
+                alert(`${depositQuestion}$ is to mutch you can't deposit more that 1000$`)
+                deposit()
+            } else {
+                loginPerson[0].amount += depositQuestion;
+                loginPerson[0].history.push(`${today()} deposit ${depositQuestion}`)
+
+            }
+            services()
+        }
+        function loan() {
+            let loanQuestion = parseInt(prompt(`your current amount ${loginPerson[0].amount} how much you money you want to take as a loan `));
+            if (loanQuestion > loginPerson[0].amount * 0.2) {
+                alert(`you can't take that mutch as a loan you can take just 20% of your amount witch is ${loginPerson[0].amount * 0.2}`)
+                loan()
+            } else {
+                loginPerson[0].amount += loanQuestion;
+                loginPerson[0].loan += loanQuestion;
+                loginPerson[0].history.push(`${today()} take a loan of ${loanQuestion}`)
+            }
+            services()
+        }
+        function invest() {
+            let investQuestion = parseInt(prompt(`your current amount is ${loginPerson[0].amount} how much you money you want to put as an invest`));
+            if (investQuestion > loginPerson[0].amount) {
+                alert(`your current amount is ${loginPerson[0].amount} you don't have ${investQuestion} on your account`)
+                invest()
+            } else {
+                loginPerson[0].amount -= investQuestion
+                loginPerson[0].invest += investQuestion
+                loginPerson[0].history.push(`${today()} invest  ${investQuestion}`)
+            }
+            services()
+        }
+        function history() {
+            alert(loginPerson[0].history.join('\r\n'));
+            services()
+        }
+
+
+        switch (servicesQuestion) {
+            case `log out`:
+                logOut()
+                break;
+            case `withdraw`:
+                withdraw()
+                break;
+            case `deposit`:
+                deposit();
+                break;
+            case `loan`:
+                loan();
+                break;
+            case `invest`:
+                invest();
+                break;
+            case `history`:
+                history();
+                break;
+            default:
+                alert(`unvalide input ${servicesQuestion} doesn't match any servie`);
+                services()
+                break;
+        }
     }
-    AskingTheUser()
 }
-
-
 
 function changePassword() {
-    let emailToChagePassword = prompt(`enter your email to change your password`);
-    DataBase.forEach(element => {
-        if (element.email == emailToChagePassword) {
-            let newPassword = prompt(`please enter the new password`);
-            let newPasswordConfirmed = prompt(`confirme your password`);
-            if (newPassword == newPasswordConfirmed) {
-                element.password = newPasswordConfirmed;
-            } else {
-                alert(`thats not the same pass that you enter at the begining`);
-                AskingTheUser()
-            }
+    let emailQuestion = prompt(`enter your email to change your password`);
+
+    for (let i = 0; i < Database.users.length; i++) {
+        const person = Database.users[i];
+        if (emailQuestion != person.email) {
+            alert(`this email doesn't exist`)
+            return changePassword()
         } else {
-            alert(`that email not exesting`);
-            AskingTheUser()
-        }
-    });
-}
-
-
-
-function AskingTheUser() {
-    let firstQuestion = prompt(`you want to sign up, log in, or change the password.`)
-    while (firstQuestion != `sign up` || firstQuestion != `log in` || firstQuestion != `change the password`) {
-        if (firstQuestion == `sign up`) {
-            singUp();
-            break;
-        } else if (firstQuestion == `log in`) {
-            logIn();
-            break;
-        } else if (firstQuestion == `change the password`) {
-            changePassword();
-            break;
-        }
-        alert(`${firstQuestion} is not accepted`);
-        firstQuestion = prompt(`please choose between sign up, log in, or change the password`)
-    }
-}
-
-
-function services(user) {
-    let servicesQuestion = prompt(`you want to log out, withdraw money, deposit money, tak a loan , invest, or history exit.`)
-
-    while (servicesQuestion != `log out` || servicesQuestion != `withdraw money` || servicesQuestion != `deposit money` || servicesQuestion != `tak a loan` || servicesQuestion != `invest` || servicesQuestion != `history` || servicesQuestion != `exit`) {
-        if (servicesQuestion == `log out`) {
-            payingTakingLoan(user);
-            // calculateInvestmentIncome(user)
-            AskingTheUser()
-            break;
-        } else if (servicesQuestion == `withdraw money`) {
-            withdrawMoney(user)
-            break;
-        } else if (servicesQuestion == `deposit money`) {
-            DepositMoney(user)
-            break;
-        } else if (servicesQuestion == `tak a loan`) {
-            takeLoan(user)
-            break;
-        } else if (servicesQuestion == `invest`) {
-            Invers(user)
-            break;
-        } else if (servicesQuestion == `history`) {
-            if (user.history.length == 0) {
-                alert(`there is no history`)
-            }else(
-                alert(user.history)
-            )
-            break;
-        }else if(servicesQuestion == `exit`){
-            break;
-        }
-        alert(`${servicesQuestion} is not an option`)
-        servicesQuestion = prompt(`please choose between  log out, withdraw money, deposit money, tak a loan , invest, or history.`)
-
-    }
-}
-
-function withdrawMoney(user) {
-    let withdrawQuestion = parseInt(prompt(`how much money you want to withdraw`))
-    if (withdrawQuestion <= user.amount) {
-        user.amount -= withdrawQuestion
-        user.history.push(`this amount ${withdrawQuestion} have been taking as a withdraw`)
-        console.log(user.amount)
-        services(user);
-    } else {
-        alert(`you don't have this money to withdraw your current amout is ${user.amount}`)
-        withdrawMoney(user)
-    }
-}
-
-function DepositMoney(user) {
-    let depositQuestion = parseInt(prompt(`how much money you want to deposit on your account`))
-
-    if (depositQuestion <= 1000) {
-        user.amount += depositQuestion;
-        user.history.push(`this ${depositQuestion} has been pushed on you account`)
-        console.log(user.amount);
-        services(user)
-    } else {
-        alert(`you can't add more that 1000 dh`)
-        DepositMoney(user)
-    }
-}
-
-function takeLoan(user) {
-    let maxLoan = user.amount * 0.2;
-    let takLoanQuestion = parseInt(prompt(`you can take up to ${maxLoan} as a loan`));
-    while (takLoanQuestion > maxLoan || takLoanQuestion == 0) {
-        takLoanQuestion = parseInt(prompt(`you can take up to ${maxLoan}`));
-    }
-    user.amount += takLoanQuestion;
-    user.history.push(`the loan of ${takLoanQuestion} have been taking`);
-    user.remainingRepayments = takLoanQuestion / (user.amount * 0.1);
-    AskingTheUser()
-}
-
-function payingTakingLoan(user) {
-    if (user.remainingRepayments > 0) {
-        user.amount -= user.amount * 0.1;
-        user.remainingRepayments--;
-        user.history.push(`this ${user.amount * 0.1} has been taking from your amount`)
-        if (user.remainingRepayments === 0) {
-            alert(`You have successfully repaid your loan.`);
+            let changePasswordQuestion = prompt(`enter the new password`);
+            let confirmChangePasswordQuestion = prompt(`enter the password again`);
+            while (changePasswordQuestion != confirmChangePasswordQuestion) {
+                alert(`the password that you give at the first time doesn't match that password`)
+                changePasswordQuestion = prompt(`enter the new password`);
+                confirmChangePasswordQuestion = prompt(`enter the password again`);
+            }
+            person.password = confirmChangePasswordQuestion
         }
     }
+    main()
 }
 
-
-function Invers(user) {
-    let inversQuestion = parseInt(prompt(`Amount of money that you want to invest:`));
-
-    while (inversQuestion > user.amount || inversQuestion <= 0) {
-        inversQuestion = parseInt(prompt(`Invalid amount. Please enter a valid amount:`));
+function main() {
+    let mainQuestion = prompt(`signup login or change password`)
+    switch (mainQuestion) {
+        case `signup`:
+            signUp()
+            break;
+        case `login`:
+            logIn()
+            break;
+        case `change password`:
+            changePassword()
+            break;
+        default:
+            alert(`${mainQuestion} doesn't match choises`)
+            main()
     }
-
-    user.amount -= inversQuestion;
-    user.investedAmount += inversQuestion;
-    user.history.push(`Amount of ${inversQuestion} has been invested.`);
-
-    AskingTheUser();
 }
 
-function calculateInvestmentIncome(user) {
-    let investmentIncomeRate = 0.2;
-    let maxIncomeRate = 1.2;
+main()
 
-    let earnedIncome = user.investedAmount * investmentIncomeRate;
-    let totalEarnedIncome = user.earnedIncome + earnedIncome;
-    user.history.push(`Amount of ${inversQuestion} has been pushed on your accout as an inverstment.`);
-
-    if (totalEarnedIncome >= user.investedAmount * maxIncomeRate) {
-        user.earnedIncome = user.investedAmount * maxIncomeRate;
-    } else {
-        user.earnedIncome = totalEarnedIncome;
-    }
-
-    return earnedIncome;
-}
-AskingTheUser()
